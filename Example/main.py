@@ -1,3 +1,5 @@
+
+
 # in this source code, the training data is not shuffled and latent vector set is exported in order to use in regression models.
 # additionaly, all data is used as training data, we dont have any validation data so validation data related codes
 
@@ -35,12 +37,12 @@ def set_seed (the_seed = 24):
 set_seed(the_seed=my_seed)
 
 # to evaluate the performance of the model for validation(test) dataset !!!!! bu fonskiyon uzerine daha fazla KAFA YORULMALI, ciktilari, Hata hesaplamalarina yonelik
-def evaluate(model, device, test_dataloader, criterion):
+def evaluate(model, test_dataloader, criterion):
     model.eval()
     diff, total_N = 0, 0
     with torch.no_grad():
         for data in test_dataloader:
-            images = data.to(device)
+            images = data
             outputs, latent = model(images)
             loss = criterion(outputs, images)
             total_N += images.size(0)
@@ -98,7 +100,7 @@ def main():
     n_epochs = 300
     lr_step_size = 500
     lr_gamma = 0.2
-    AE_model = Autoencoder().to(device)
+    AE_model = Autoencoder()
     total_params = sum(p.numel() for p in AE_model.parameters())
     optimizer = optim.Adam(AE_model.parameters(), lr=1e-3)
     scheduler = lr_scheduler.StepLR(optimizer, lr_step_size, gamma=lr_gamma)
@@ -119,7 +121,7 @@ def main():
         # train the model #
         ###################
         for idx, (images) in enumerate(train_loader):
-            images = images.to(device)
+            images = images
             recon_images, latent_v = AE_model(images)
             loss = criterion(recon_images, images)
             optimizer.zero_grad()
@@ -155,20 +157,20 @@ def main():
     final_latent_set = torch.cat(latent_set, dim=0)
 
     # Evaulation of the validation set
-    final_output_val, latent_val, MAPE_val, loss_val = evaluate(model= AE_model, device= device, 
+    final_output_val, latent_val, MAPE_val, loss_val = evaluate(model= AE_model, 
                                                                 test_dataloader=val_loader, criterion=criterion)
 
     # changing normalized data back to orginal distribution for training dataset
     reconstructed_data = torch.zeros(len(train_data),3,150,498)
     for i in range(3):
         for k in range(len(train_data)):
-            reconstructed_data[k,i,:,:] = final_output[k,i,:,:]* torch.tensor(flowfield_std).to(device)[i] + torch.tensor(flowfield_mean).to(device)[i]
+            reconstructed_data[k,i,:,:] = final_output[k,i,:,:]* torch.tensor(flowfield_std)[i] + torch.tensor(flowfield_mean)[i]
 
     # Origininal data
     original_data = torch.zeros(len(train_data),3,150,498)
     for i in range(3):
         for k in range(len(train_data)):
-            original_data[k,i,:,:] = torch.tensor(train_data[k,i,:,:]).to(device)* torch.tensor(flowfield_std).to(device)[i] + torch.tensor(flowfield_mean).to(device)[i]
+            original_data[k,i,:,:] = torch.tensor(train_data[k,i,:,:])* torch.tensor(flowfield_std)[i] + torch.tensor(flowfield_mean)[i]
     
     # error data
     error_data = abs(original_data - reconstructed_data) / original_data
@@ -177,7 +179,7 @@ def main():
     reconstructed_val = torch.zeros(len(val_data),3,150,498)
     for i in range(3):
         for k in range(len(val_data)):
-            reconstructed_val[k,i,:,:] = final_output_val[k,i,:,:]* torch.tensor(flowfield_std).to(device)[i] + torch.tensor(flowfield_mean).to(device)[i]
+            reconstructed_val[k,i,:,:] = final_output_val[k,i,:,:]* torch.tensor(flowfield_std)[i] + torch.tensor(flowfield_mean)[i]
 
     # Exporting files to designed output file  / bagimsiz hale getirmeli bunlari da 
     # torch to numpy for latent vector and exporting
