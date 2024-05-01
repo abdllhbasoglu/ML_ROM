@@ -33,7 +33,7 @@ def set_seed (the_seed = 24):
   np.random.seed(the_seed)
   random.seed(the_seed)
   
-set_seed(my_seed=my_seed)
+set_seed(the_seed=my_seed)
 
 # to evaluate the performance of the model for validation(test) dataset !!!!! bu fonskiyon uzerine daha fazla KAFA YORULMALI, ciktilari, Hata hesaplamalarina yonelik
 def evaluate(model, device, test_dataloader, criterion):
