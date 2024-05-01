@@ -59,10 +59,10 @@ def main():
     main_path = os.path.dirname(os.path.abspath(__file__))
 
     # Veri dosyalarının bulunduğu dizini belirleyin
-    dataset_path = os.path.join(main_path, "input")
+    dataset_path = os.path.join(main_path, "..", "..", "input")
 
     # Output dosyalarinin cikacagi path
-    output_path = os.path.join(main_path, "output")
+    output_path = os.path.join(main_path, "..", "..", "output")
     
     # Veri dosyalarını yükleme
     data = np.load(os.path.join(dataset_path, "flowfield_hom.npy"))
