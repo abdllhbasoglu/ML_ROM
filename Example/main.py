@@ -21,7 +21,6 @@ import argparse
 import os
 import random
 torch.set_default_dtype(torch.float64)
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # to control randomization, a seed value is assigned  to make code repeatable
 my_seed = 24
