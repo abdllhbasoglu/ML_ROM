@@ -198,7 +198,7 @@ def main():
     np.save(error_data_filename, error_data)
     
     #shuffled AoA exporting
-    shuff_train_flowcon = train_flowcon.cpu().detach().numpy()
+    shuff_train_flowcon = train_flowcon
     AoA_filename = os.path.join(output_path, "shuffled_t_AoA.npy") 
     np.save(AoA_filename, shuff_train_flowcon)
 
