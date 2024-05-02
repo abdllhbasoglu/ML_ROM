@@ -97,7 +97,7 @@ def main():
 
     ## after this point, define them as key-value pairs by command, hyperparameters using args lib
     # number of epochs
-    n_epochs = 10
+    n_epochs = 300
     lr_step_size = 500
     lr_gamma = 0.2
     AE_model = Autoencoder()
