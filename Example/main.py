@@ -1,7 +1,11 @@
-
-
 # in this source code, the training data is not shuffled and latent vector set is exported in order to use in regression models.
-# additionaly, all data is used as training data, we dont have any validation data so validation data related codes
+
+#######################################################################################
+################                                                       ################
+################ This code is for using single GPU in VESSL AI Cluster ################
+################                                                       ################
+#######################################################################################
+
 
 from Model import Autoencoder
 from utils import Reconstructed_writer # veriyi shuffle ediyorum lakin kaydederken bu shuffle olayini hesaba katmiyorum. o yuzden shuffle edilmis AoA'yi da yazdirsam iyi olur.
@@ -192,6 +196,11 @@ def main():
     reconstructed_data_filename = os.path.join(output_path, "reconstructed_data.npy") 
     np.save(reconstructed_data_filename, reconstructed_data)
 
+    # torch to numpy for reconstructed validation data and exporting
+    reconstructed_val = reconstructed_val.cpu().detach().numpy()
+    reconstructed_val_filename = os.path.join(output_path, "reconstructed_val.npy") 
+    np.save(reconstructed_val_filename, reconstructed_val)
+    
     # Exporting the error
     error_data = error_data.cpu().detach().numpy()
     error_data_filename = os.path.join(output_path, "error_data.npy")
