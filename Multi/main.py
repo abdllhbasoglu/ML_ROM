@@ -118,7 +118,7 @@ def main():
     device = torch.device("cuda:{}".format(local_rank))
     AE_model = AE_model.to(device)
     ddp_model = torch.nn.parallel.DistributedDataParallel(
-        AE_model, device_ids= [args.local_rank], output_device=local_rank)
+        AE_model, device_ids= [local_rank], output_device=local_rank)
         
     # To resume, load model from "cuda:0"
     if args.resume:
