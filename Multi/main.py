@@ -62,7 +62,7 @@ def main():
         "--local-rank",
         type=int,
         help="Local rank. Necessary for using the torch.distributed.launch utility.",
-      
+    )  
     parser.add_argument(
         "--backend", type=str, help="Distributed backend (NCCL or gloo)", default="nccl"
     )
