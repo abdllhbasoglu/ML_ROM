@@ -188,7 +188,7 @@ def main():
     durations = []
     for epoch in tqdm(range(args.num_epochs)):
         #monitor training loss and validation loss
-        print(f"Local Rank: {args.local_rank} Epoch: {epoch}, training started.")
+        print(f"Local Rank: {local_rank} Epoch: {epoch}, training started.")
         loss = 0.0
         start = time.time()
         ddp_model.train()
