@@ -57,7 +57,12 @@ def main():
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter    
     )
-    
+  
+    parser.add_argument(
+        "--local-rank",
+        type=int,
+        help="Local rank. Necessary for using the torch.distributed.launch utility.",
+      
     parser.add_argument(
         "--backend", type=str, help="Distributed backend (NCCL or gloo)", default="nccl"
     )
@@ -113,16 +118,15 @@ def main():
     output_path = os.path.join(main_path, "..", "..", args.model_dir)
      
     # Model with DDP
-    local_rank = int(os.environ['LOCAL_RANK'])
     AE_model = Autoencoder()
-    device = torch.device("cuda:{}".format(local_rank))
+    device = torch.device("cuda:{}".format(args.local_rank))
     AE_model = AE_model.to(device)
     ddp_model = torch.nn.parallel.DistributedDataParallel(
-        AE_model, device_ids= [local_rank], output_device=local_rank)
+        AE_model, device_ids= [args.local_rank], output_device=args.local_rank)
         
     # To resume, load model from "cuda:0"
     if args.resume:
-        map_location = {"cuda:0": "cuda:{}".format(local_rank)}
+        map_location = {"cuda:0": "cuda:{}".format(args.local_rank)}
         ddp_model.load_state_dict(torch.load(output_path, map_location=map_location))    
     
     
@@ -188,7 +192,7 @@ def main():
     durations = []
     for epoch in tqdm(range(args.num_epochs)):
         #monitor training loss and validation loss
-        print(f"Local Rank: {local_rank} Epoch: {epoch}, training started.")
+        print(f"Local Rank: {args.local_rank} Epoch: {epoch}, training started.")
         loss = 0.0
         start = time.time()
         ddp_model.train()
@@ -216,7 +220,7 @@ def main():
         durations.append(duration)          
     
         # Save and evaluate model only in local_rank 0
-        if local_rank == 0:
+        if args.local_rank == 0:
             final_output_val, latent_val, accuracy, loss_val = evaluate(
                 model=ddp_model, device=device, test_dataloader=val_loader, criterion=criterion
             )
