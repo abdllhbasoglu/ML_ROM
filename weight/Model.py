@@ -85,7 +85,7 @@ class Autoencoder(nn.Module):
     def forward(self, x):
         latent = self.encode(x)
         reconstructed = self.decode(latent)
-        return reconstructed
+        return reconstructed, latent
 
     def encode(self, x):
         h= self.encoder(x)
