@@ -8,7 +8,7 @@
 
 
 from Model import Autoencoder
-from utils import Reconstructed_writer # veriyi shuffle ediyorum lakin kaydederken bu shuffle olayini hesaba katmiyorum. o yuzden shuffle edilmis AoA'yi da yazdirsam iyi olur.
+# from utils import Reconstructed_writer # veriyi shuffle ediyorum lakin kaydederken bu shuffle olayini hesaba katmiyorum. o yuzden shuffle edilmis AoA'yi da yazdirsam iyi olur.
 
 import vessl
 import numpy as np
