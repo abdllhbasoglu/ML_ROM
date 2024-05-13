@@ -210,13 +210,13 @@ def main():
     print("reconstructred data type:", final_output.dtype)
     
     # changing normalized data back to orginal distribution for training dataset
-    reconstructed_data = torch.zeros(len(train_data),3,150,498)
+    reconstructed_data = torch.zeros(len(train_data),3,150,498).to(device)
     for i in range(3):
         for k in range(len(train_data)):
             reconstructed_data[k,i,:,:] = final_output[k,i,:,:] * flowfield_std[i] + flowfield_mean[i]
 
     # Origininal data
-    original_data = torch.zeros(len(train_data),3,150,498)
+    original_data = torch.zeros(len(train_data),3,150,498).to(device)
     for i in range(3):
         for k in range(len(train_data)):
             original_data[k,i,:,:] = torch.tensor(train_data[k,i,:,:]) * flowfield_std[i] + flowfield_mean[i]
@@ -225,7 +225,7 @@ def main():
     error_data = abs(original_data - reconstructed_data) / original_data
 
     # changing normalized data back to orginal distribution for validation dataset
-    reconstructed_val = torch.zeros(len(val_data),3,150,498)
+    reconstructed_val = torch.zeros(len(val_data),3,150,498).to(device)
     for i in range(3):
         for k in range(len(val_data)):
             reconstructed_val[k,i,:,:] = final_output_val[k,i,:,:] * flowfield_std[i] + flowfield_mean[i]
