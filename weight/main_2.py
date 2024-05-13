@@ -202,6 +202,12 @@ def main():
 
     flowfield_std = torch.tensor(flowfield_std).to(device)
     flowfield_mean = torch.tensor(flowfield_mean).to(device)
+
+    ############ Bu kismi data  type ve cihazlarini gordukten sonra silebilirsin #####################
+    print("flow field data device:", flowfield_std.device, " and ", flowfield_mean.device)
+    print("flow field data type:", flowfield_std.dtype, " and ", flowfield_mean.dtype)
+    print("reconstructred data device:", final_output.device)
+    print("reconstructred data type:", final_output.dtype)
     
     # changing normalized data back to orginal distribution for training dataset
     reconstructed_data = torch.zeros(len(train_data),3,150,498)
