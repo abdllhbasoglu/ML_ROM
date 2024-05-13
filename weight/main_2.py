@@ -28,6 +28,10 @@ import os
 import random
 torch.set_default_dtype(torch.float64)
 
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+print(device)
+print(torch.cuda.get_device_name(0)) 
+
 # Weighted-loss funtion
 def weighted_MSE_loss(reconstructed, origin, device, mode = 'linear', h_dim=150, w_dim=498):
     
@@ -131,10 +135,6 @@ def main():
     #   Root mean square error
     def RMSELoss(recon_x,x):
         return torch.sqrt(criterion(recon_x,x))
-    
-    #Device
-    local_rank = int(os.environ['LOCAL_RANK'])
-    device = torch.device("cuda:{}".format(local_rank))
     
     ## after this point, define them as key-value pairs by command, hyperparameters using args lib
     # number of epochs
