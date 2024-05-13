@@ -1,6 +1,4 @@
 import torch.nn as nn
-from torchviz import make_dot
-from torchsummary import summary
 import torch.nn.init as init
 
 class Autoencoder(nn.Module):
