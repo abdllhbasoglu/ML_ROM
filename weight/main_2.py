@@ -216,11 +216,11 @@ def main():
             reconstructed_data[k,i,:,:] = final_output[k,i,:,:] * flowfield_std[i] + flowfield_mean[i]
 
     # Origininal data
-    train_data = torch.tensor(train_data[k,i,:,:]).to(device)
+    train_data = torch.tensor(train_data).to(device)
     original_data = torch.zeros(len(train_data),3,150,498).to(device)
     for i in range(3):
         for k in range(len(train_data)):
-            original_data[k,i,:,:] = torch.tensor(train_data[k,i,:,:]) * flowfield_std[i] + flowfield_mean[i]
+            original_data[k,i,:,:] = train_data[k,i,:,:] * flowfield_std[i] + flowfield_mean[i]
     
     # error data
     error_data = abs(original_data - reconstructed_data) / original_data
