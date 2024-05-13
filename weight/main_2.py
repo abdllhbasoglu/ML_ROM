@@ -59,6 +59,8 @@ def weighted_MSE_loss(reconstructed, origin, device, mode = 'linear', h_dim=150,
 
     weight_matrix = weight_matrix.unsqueeze(0).expand(3, -1, -1) # 3 kanala çoğaltma
     weight_matrix = weight_matrix.to(device)
+    # weight_matrix tensörünün cihazını kontrol et
+    print("weight_matrix tensörünün cihazı:", weight_matrix.device)
     
     return (weight_matrix * (reconstructed - origin) ** 2).mean()
 
@@ -164,6 +166,7 @@ def main():
             images = images.to(device)
             recon_images, latent_v = AE_model(images)
             loss = weighted_MSE_loss(reconstructed=recon_images, origin= images, device= device, mode = 'log')
+            print("Loss funtion device is:", loss.device) 
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
