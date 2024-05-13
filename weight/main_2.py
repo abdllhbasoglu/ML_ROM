@@ -30,7 +30,6 @@ torch.set_default_dtype(torch.float64)
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print(device)
-print(torch.cuda.get_device_name(0)) 
 
 # Weighted-loss funtion
 def weighted_MSE_loss(reconstructed, origin, device, mode = 'linear', h_dim=150, w_dim=498):
