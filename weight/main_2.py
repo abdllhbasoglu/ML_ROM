@@ -200,17 +200,20 @@ def main():
     final_output_val, latent_val, MAPE_val, loss_val = evaluate(model= AE_model, 
                                                                 test_dataloader=val_loader, criterion=criterion, device=device)
 
+    flowfield_std = torch.tensor(flowfield_std).to(device)
+    flowfield_mean = torch.tensor(flowfield_mean).to(device)
+    
     # changing normalized data back to orginal distribution for training dataset
     reconstructed_data = torch.zeros(len(train_data),3,150,498)
     for i in range(3):
         for k in range(len(train_data)):
-            reconstructed_data[k,i,:,:] = final_output[k,i,:,:]* torch.tensor(flowfield_std).to(device)[i] + torch.tensor(flowfield_mean).to(device)[i]
+            reconstructed_data[k,i,:,:] = final_output[k,i,:,:] * flowfield_std[i] + flowfield_mean[i]
 
     # Origininal data
     original_data = torch.zeros(len(train_data),3,150,498)
     for i in range(3):
         for k in range(len(train_data)):
-            original_data[k,i,:,:] = torch.tensor(train_data[k,i,:,:])* torch.tensor(flowfield_std).to(device)[i] + torch.tensor(flowfield_mean).to(device)[i]
+            original_data[k,i,:,:] = torch.tensor(train_data[k,i,:,:]) * flowfield_std[i] + flowfield_mean[i]
     
     # error data
     error_data = abs(original_data - reconstructed_data) / original_data
@@ -219,7 +222,7 @@ def main():
     reconstructed_val = torch.zeros(len(val_data),3,150,498)
     for i in range(3):
         for k in range(len(val_data)):
-            reconstructed_val[k,i,:,:] = final_output_val[k,i,:,:]* torch.tensor(flowfield_std).to(device)[i] + torch.tensor(flowfield_mean).to(device)[i]
+            reconstructed_val[k,i,:,:] = final_output_val[k,i,:,:] * flowfield_std[i] + flowfield_mean[i]
 
     # Exporting files to designed output file  / bagimsiz hale getirmeli bunlari da 
     # torch to numpy for latent vector and exporting
