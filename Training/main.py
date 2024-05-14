@@ -268,7 +268,7 @@ def main():
 
     # Evaulation of the validation set
     final_output_val, latent_val, MAPE_val, loss_val = evaluate(model= AE_model, 
-                                                                test_dataloader=val_loader, loss_function= args.loss_funtion, loss_mode=args.loss_mode, device=device)
+                                                                test_dataloader=val_loader, loss_function= args.loss_function, loss_mode=args.loss_mode, device=device)
     
     print("Validation Loss: ", MAPE_val, " and ", loss_val, ". (MAPE and Loss function, respectively)")
 
