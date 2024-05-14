@@ -323,5 +323,10 @@ def main():
     AoA_filename = os.path.join(output_path, "shuffled_t_AoA.npy") 
     np.save(AoA_filename, shuff_train_flowcon)
 
+    #shuffled AoA for Val exporting
+    shuff_val_flowcon = val_flowcon
+    AoA_filename = os.path.join(output_path, "shuffled_v_AoA.npy") 
+    np.save(AoA_filename, shuff_val_flowcon)
+    
 if __name__ == "__main__":
     main()
