@@ -207,7 +207,7 @@ def main():
     AE_model = Autoencoder().to(device)
     total_params = sum(p.numel() for p in AE_model.parameters())
     print(total_params)
-    optimizer = optim.Adam(AE_model.parameters(), lr=args.learning_rate, momentum=0.9, weight_decay=1e-5)
+    optimizer = optim.Adam(AE_model.parameters(), lr=args.learning_rate)
     #scheduler = lr_scheduler.StepLR(optimizer, lr_step_size, gamma=lr_gamma)
     start = time.time()
 
