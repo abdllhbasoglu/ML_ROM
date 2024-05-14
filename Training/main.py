@@ -166,7 +166,9 @@ def main():
     )    
     
     args = parser.parse_args()   
-       
+
+    print(args.loss_function) #!!!!!!!!!!!! daha sonra silinecek
+    
     # kodu path'den bagimsiz hale getirelim.
     # Kodunuzun ana dizinini bulun
     main_path = os.path.dirname(os.path.abspath(__file__))
