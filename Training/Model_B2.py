@@ -1,8 +1,6 @@
 
 import torch
 import torch.nn as nn
-from torchviz import make_dot
-from torchsummary import summary
 import torch.nn.init as init
 
 class Autoencoder(nn.Module):
@@ -122,34 +120,5 @@ class Autoencoder(nn.Module):
                 init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='leaky_relu')
                 if m.bias is not None:
                     init.zeros_(m.bias)
-                    
-
-################################ Testing Model ######################################
-# Autoencoder'i oluştur
-#device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-#autoencoder = Autoencoder().to(device=device)
-#print(autoencoder)
-
-#summary(autoencoder, (3, 150, 498), device='cuda')
-# Giriş verisi
-#input_data = torch.randn(3, 3, 150, 498).to(device)
-
-# Autoencoder üzerinden geçiş
-#output = autoencoder(input_data)
-
-# Verify model output
-#print("Output shape:", output.shape)
-
-
-
-# to make a graph of model architecture
-# Model grafiğini oluştur
-#dot = make_dot(output, params=dict(autoencoder.named_parameters()))
-#dot.render("CNN model", format="png")
-# Display the graph directly
-#dot.view()
-
-
-
-
+                
 
