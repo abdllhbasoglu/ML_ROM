@@ -18,8 +18,7 @@
 #######################################################################################
 
 
-from Model_Baseline import Autoencoder
-# from utils import Reconstructed_writer # veriyi shuffle ediyorum lakin kaydederken bu shuffle olayini hesaba katmiyorum. o yuzden shuffle edilmis AoA'yi da yazdirsam iyi olur.
+from Model_B1 import Autoencoder
 
 import vessl
 import numpy as np
