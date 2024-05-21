@@ -254,7 +254,13 @@ def main():
       
             to_print = "Epoch[{}/{}] Time: {:.0f} Loss: {:.6f}".format(epoch+1, 
                               args.num_epochs, time.time()-start, loss.item())
-            print(to_print)    
+            print(to_print)
+            
+            # Logging to vessl
+            vessl.log(
+                step=epoch,
+                payload={"loss": loss, "elapsed": duration},
+            )
 
     print(f"Total training time: {sum(durations):.2f}s")
     print(f"Average training time : {sum(durations) / len(durations):.2f}s")
