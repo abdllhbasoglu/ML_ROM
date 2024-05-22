@@ -265,7 +265,7 @@ def main():
             # Also track validation loss 
             AE_model.eval()
             with torch.no_grad():
-                for data in test_dataloader:
+                for data in val_loader:
                     val_images = data.to(device)
                     val_recon_images, latent = AE_model(images)
             
