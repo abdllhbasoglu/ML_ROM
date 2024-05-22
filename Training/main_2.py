@@ -261,7 +261,7 @@ def main():
                 payload={"loss_train": loss, "elapsed": duration},
             )
 
-        if epoch % 50 == 0:# and epoch != 0:
+        if epoch % 5 == 0:# and epoch != 0:
             # Also track validation loss 
             model.eval()
             with torch.no_grad():
