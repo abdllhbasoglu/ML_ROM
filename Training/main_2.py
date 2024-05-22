@@ -249,7 +249,7 @@ def main():
         duration = end - start
         durations.append(duration)          
 
-        if epoch % 10 == 0:# and epoch != 0:
+        if epoch % 2 == 0:# and epoch != 0:
       
             to_print = "Epoch[{}/{}] Time: {:.0f} Loss: {:.6f}".format(epoch+1, 
                               args.num_epochs, time.time()-start, loss.item())
@@ -263,11 +263,11 @@ def main():
                     val_recon_images, latent = AE_model(images)
             
                     # loss function is also decided by assigned hyperparameter
-                    if loss_function == "MSE":
+                    if args.loss_function == "MSE":
                         loss_val = criterion(val_recon_images, val_images)
-                    elif loss_function == "RMSE":
+                    elif args.loss_function == "RMSE":
                         loss_val = RMSELoss(val_recon_images, val_images)
-                    elif loss_function == "WMSE":
+                    elif args.loss_function == "WMSE":
                         loss_val = weighted_MSE_loss(reconstructed=val_recon_images, origin= val_images, device= device, mode = loss_mode)          
 
             # Logging to vessl
