@@ -108,7 +108,6 @@ def evaluate(model, test_dataloader, loss_function, loss_mode, device):
             elif loss_function == "WMSE":
                 loss = weighted_MSE_loss(reconstructed=recon_images, origin= images, device= device, mode = loss_mode)
             
-            loss = criterion(recon_images, images)
             total_N += images.size(0)
             diff += (torch.abs(recon_images - images)/images).sum().item()
 
@@ -254,13 +253,35 @@ def main():
       
             to_print = "Epoch[{}/{}] Time: {:.0f} Loss: {:.6f}".format(epoch+1, 
                               args.num_epochs, time.time()-start, loss.item())
-            print(to_print)    
-            
+            print(to_print)
+
             # Logging to vessl
             vessl.log(
                 step=epoch,
-                payload={"loss": loss, "elapsed": duration},
+                payload={"loss_train": loss, "elapsed": duration},
             )
+
+        if epoch % 50 == 0:# and epoch != 0:
+            # Also track validation loss 
+            model.eval()
+            with torch.no_grad():
+                for data in test_dataloader:
+                    val_images = data.to(device)
+                    val_recon_images, latent = model(images)
+            
+                    # loss function is also decided by assigned hyperparameter
+                    if loss_function == "MSE":
+                        loss_val = criterion(val_recon_images, val_images)
+                    elif loss_function == "RMSE":
+                        loss_val = RMSELoss(val_recon_images, val_images)
+                    elif loss_function == "WMSE":
+                        loss_val = weighted_MSE_loss(reconstructed=val_recon_images, origin= val_images, device= device, mode = loss_mode)
+            # Logging to vessl
+            vessl.log(
+                step=epoch,
+                payload={"loss_val": loss_val},
+            )            
+
 
     print(f"Total training time: {sum(durations):.2f}s")
     print(f"Average training time : {sum(durations) / len(durations):.2f}s")
