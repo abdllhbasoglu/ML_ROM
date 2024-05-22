@@ -263,11 +263,11 @@ def main():
 
         if epoch % 5 == 0:# and epoch != 0:
             # Also track validation loss 
-            model.eval()
+            AE_model.eval()
             with torch.no_grad():
                 for data in test_dataloader:
                     val_images = data.to(device)
-                    val_recon_images, latent = model(images)
+                    val_recon_images, latent = AE_model(images)
             
                     # loss function is also decided by assigned hyperparameter
                     if loss_function == "MSE":
