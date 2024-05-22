@@ -254,14 +254,7 @@ def main():
             to_print = "Epoch[{}/{}] Time: {:.0f} Loss: {:.6f}".format(epoch+1, 
                               args.num_epochs, time.time()-start, loss.item())
             print(to_print)
-
-            # Logging to vessl
-            vessl.log(
-                step=epoch,
-                payload={"loss_train": loss, "elapsed": duration},
-            )
-
-        if epoch % 5 == 0:# and epoch != 0:
+            
             # Also track validation loss 
             AE_model.eval()
             with torch.no_grad():
@@ -275,13 +268,13 @@ def main():
                     elif loss_function == "RMSE":
                         loss_val = RMSELoss(val_recon_images, val_images)
                     elif loss_function == "WMSE":
-                        loss_val = weighted_MSE_loss(reconstructed=val_recon_images, origin= val_images, device= device, mode = loss_mode)
+                        loss_val = weighted_MSE_loss(reconstructed=val_recon_images, origin= val_images, device= device, mode = loss_mode)          
+
             # Logging to vessl
             vessl.log(
                 step=epoch,
-                payload={"loss_val": loss_val},
-            )            
-
+                payload={"loss_train": loss, "loss_val": loss_val, "elapsed": duration},
+            )
 
     print(f"Total training time: {sum(durations):.2f}s")
     print(f"Average training time : {sum(durations) / len(durations):.2f}s")
