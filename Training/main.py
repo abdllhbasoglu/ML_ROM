@@ -18,7 +18,7 @@
 #######################################################################################
 
 
-from Model_B18 import Autoencoder
+from Model_B19 import Autoencoder
 
 import vessl
 import numpy as np
