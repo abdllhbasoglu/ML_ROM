@@ -308,9 +308,6 @@ def main():
     for i in range(3):
         for k in range(len(train_data)):
             original_data[k,i,:,:] = train_data[k,i,:,:] * flowfield_std[i] + flowfield_mean[i]
-    
-    # error data
-    error_data = abs(original_data - reconstructed_data) / original_data
 
     # changing normalized data back to orginal distribution for validation dataset
     reconstructed_val = torch.zeros(len(val_data),3,150,498).to(device)
@@ -333,12 +330,7 @@ def main():
     reconstructed_val = reconstructed_val.cpu().detach().numpy()
     reconstructed_val_filename = os.path.join(output_path, "reconstructed_val.npy") 
     np.save(reconstructed_val_filename, reconstructed_val)
-    
-    # Exporting the error
-    error_data = error_data.cpu().detach().numpy()
-    error_data_filename = os.path.join(output_path, "error_data.npy")
-    np.save(error_data_filename, error_data)
-    
+
     #shuffled AoA exporting
     shuff_train_flowcon = train_flowcon
     AoA_filename = os.path.join(output_path, "shuffled_t_AoA.npy") 
