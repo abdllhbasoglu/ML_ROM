@@ -260,7 +260,7 @@ def main():
             with torch.no_grad():
                 for data in val_loader:
                     val_images = data.to(device)
-                    val_recon_images, latent = AE_model(images)
+                    val_recon_images, latent = AE_model(val_images)
             
                     # loss function is also decided by assigned hyperparameter
                     if args.loss_function == "MSE":
