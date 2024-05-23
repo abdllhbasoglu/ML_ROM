@@ -108,7 +108,6 @@ def evaluate(model, test_dataloader, loss_function, loss_mode, device):
             elif loss_function == "WMSE":
                 loss = weighted_MSE_loss(reconstructed=recon_images, origin= images, device= device, mode = loss_mode)
             
-            loss = criterion(recon_images, images)
             total_N += images.size(0)
             diff += (torch.abs(recon_images - images)/images).sum().item()
 
