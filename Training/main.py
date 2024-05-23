@@ -255,10 +255,25 @@ def main():
                               args.num_epochs, time.time()-start, loss.item())
             print(to_print)
             
+            # Also track validation loss 
+            AE_model.eval()
+            with torch.no_grad():
+                for data in val_loader:
+                    val_images = data.to(device)
+                    val_recon_images, latent = AE_model(val_images)
+            
+                    # loss function is also decided by assigned hyperparameter
+                    if args.loss_function == "MSE":
+                        loss_val = criterion(val_recon_images, val_images)
+                    elif args.loss_function == "RMSE":
+                        loss_val = RMSELoss(val_recon_images, val_images)
+                    elif args.loss_function == "WMSE":
+                        loss_val = weighted_MSE_loss(reconstructed=val_recon_images, origin= val_images, device= device, mode = loss_mode)          
+
             # Logging to vessl
             vessl.log(
                 step=epoch,
-                payload={"loss": loss, "elapsed": duration},
+                payload={"loss_train": loss, "loss_val": loss_val, "elapsed": duration},
             )
 
     print(f"Total training time: {sum(durations):.2f}s")
