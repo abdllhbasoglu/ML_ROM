@@ -268,7 +268,7 @@ def main():
                     elif args.loss_function == "RMSE":
                         loss_val = RMSELoss(val_recon_images, val_images)
                     elif args.loss_function == "WMSE":
-                        loss_val = weighted_MSE_loss(reconstructed=val_recon_images, origin= val_images, device= device, mode = loss_mode)          
+                        loss_val = weighted_MSE_loss(reconstructed=val_recon_images, origin= val_images, device= device, mode = args.loss_mode)          
 
             # Logging to vessl
             vessl.log(
