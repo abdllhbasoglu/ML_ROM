@@ -41,36 +41,37 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print(device)
 
 # Weighted-loss funtion
-def weighted_MSE_loss(reconstructed, origin, device, mode = 'linear', h_dim=150, w_dim=498):
+def loss_function(reconstructed, origin, device, alpha=1.0, beta=1.0, mode='log', h_dim=150, w_dim=498):
     
+    # Move weight matrices to the correct device
+    # Exponential Weight Matrix
+    weight_exp = torch.exp(torch.linspace(0, 1, steps=h_dim)).unsqueeze(1).repeat(1, w_dim)
+    weight_exp = ((weight_exp - weight_exp.min()) / (weight_exp.max() - weight_exp.min())).to(device)
     
-    weight_matrix = torch.zeros(h_dim, w_dim)
+    # Log Weight Matrix
+    weight_log = torch.logspace(0, 1, steps=h_dim).unsqueeze(1).repeat(1, w_dim)
+    weight_log = ((weight_log - weight_log.min()) / (weight_log.max() - weight_log.min())).to(device)
     
-    if mode =='exponential':
-        # Exponential dönüşüm uygulama
-        exp_values = np.linspace(0, 1, num=h_dim) ** 2  # Sayıları exponential şekilde artırma
-        for i in range(w_dim):
-            weight_matrix[:, i] = torch.tensor(exp_values)
-            
+    # WMSE-exp for pressure (the first channel)
+    pressure_loss = weight_exp * (reconstructed[:, 0, :, :] - origin[:, 0, :, :]) ** 2
+    pressure_loss = alpha * pressure_loss.mean()
+
+    if mode == 'MSE':
+        # (a) MSE for u-velocity and v-velocity (the second and third channels)
+        u_velocity_loss = (reconstructed[:, 1, :, :] - origin[:, 1, :, :]) ** 2
+        v_velocity_loss = (reconstructed[:, 2, :, :] - origin[:, 2, :, :]) ** 2
+        velocity_loss = beta * (u_velocity_loss.mean() + v_velocity_loss.mean())    
+
     elif mode == 'log':
-        # Logaritmik dönüşüm uygulama
-        log_values = np.log(np.arange(1, h_dim+1))  # 1'den 498'e kadar olan değerlerin logaritması
-
-        # Min-max normalizasyonu uygulama
-        min_val = np.min(log_values)
-        max_val = np.max(log_values)
-        log_values_normalized = (log_values - min_val) / (max_val - min_val)
-        for i in range(w_dim):
-            weight_matrix[:, i] = torch.tensor(log_values_normalized)
+        # (b) WMSE-log for u-velocity and v-velocity (the second and third channels)
+        u_velocity_loss = weight_log * (reconstructed[:, 1, :, :] - origin[:, 1, :, :]) ** 2
+        v_velocity_loss = weight_log *(reconstructed[:, 2, :, :] - origin[:, 2, :, :]) ** 2
+        velocity_loss = beta * (u_velocity_loss.mean() + v_velocity_loss.mean())
     
-    elif mode == 'linear':          
-        for i in range(w_dim):
-            weight_matrix[:, i] = torch.linspace(0, 1, steps=h_dim)      
-
-    weight_matrix = weight_matrix.unsqueeze(0).expand(3, -1, -1) # 3 kanala çoğaltma
-    weight_matrix = weight_matrix.to(device)
+    # Total loss
+    total_loss = pressure_loss + velocity_loss
     
-    return (weight_matrix * (reconstructed - origin) ** 2).mean()
+    return total_loss
 
 # Mean square error (MSE)
 criterion = nn.MSELoss()
@@ -106,7 +107,7 @@ def evaluate(model, test_dataloader, loss_function, loss_mode, device):
             elif loss_function == "RMSE":
                 loss = RMSELoss(recon_images, images)
             elif loss_function == "WMSE":
-                loss = weighted_MSE_loss(reconstructed=recon_images, origin= images, device= device, mode = loss_mode)
+                loss = loss_function(reconstructed=recon_images, origin= images, device= device, mode = loss_mode)
             
             total_N += images.size(0)
             diff += (torch.abs(recon_images - images)/images).sum().item()
@@ -235,7 +236,7 @@ def main():
             elif args.loss_function == "RMSE":
                 loss = RMSELoss(recon_images, images)
             elif args.loss_function == "WMSE":
-                loss = weighted_MSE_loss(reconstructed=recon_images, origin= images, device= device, mode = args.loss_mode) 
+                loss = loss_function(reconstructed=recon_images, origin= images, device= device, mode = args.loss_mode) 
                 
             optimizer.zero_grad()
             loss.backward()
@@ -268,7 +269,7 @@ def main():
                     elif args.loss_function == "RMSE":
                         loss_val = RMSELoss(val_recon_images, val_images)
                     elif args.loss_function == "WMSE":
-                        loss_val = weighted_MSE_loss(reconstructed=val_recon_images, origin= val_images, device= device, mode = loss_mode)          
+                        loss_val = loss_function(reconstructed=val_recon_images, origin= val_images, device= device, mode = args.loss_mode)          
 
             # Logging to vessl
             vessl.log(
