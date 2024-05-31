@@ -250,7 +250,7 @@ def main():
         duration = end - start
         durations.append(duration)          
 
-        if epoch % 2 == 0:# and epoch != 0:
+        if epoch % 10 == 0:# and epoch != 0:
       
             to_print = "Epoch[{}/{}] Time: {:.0f} Loss: {:.6f}".format(epoch+1, 
                               args.num_epochs, time.time()-start, loss.item())
