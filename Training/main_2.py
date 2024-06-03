@@ -6,7 +6,7 @@
 #                                --batch_size     (default: 5)
 #                                --learning_rate  (default: 1e-3)
 #                                --model_filename (default: Trainedmodel.pth)
-#                                --loss_function  (default: WMSE) --> 3 options as a) MSE, b)RMSE and c) WMSE
+#                                --loss_function_type  (default: WMSE) --> 3 options as a) MSE, b)RMSE and c) WMSE
 #                                --loss_mode      (default: log)  --> 3 options as a) linear, b)exponential and c) log
 
 # different models are trained by changing 1st line (from Model_X import Autoencoder)
@@ -93,7 +93,7 @@ def set_seed (the_seed = 24):
 set_seed(the_seed=my_seed)
 
 # to evaluate the performance of the model for validation(test) dataset !!!!! bu fonskiyon uzerine daha fazla KAFA YORULMALI, ciktilari, Hata hesaplamalarina yonelik
-def evaluate(model, test_dataloader, loss_function, loss_mode, device):
+def evaluate(model, test_dataloader, loss_fn_name, loss_mode, device):
     model.eval()
     diff, total_N = 0, 0
     with torch.no_grad():
@@ -150,7 +150,7 @@ def main():
     
     # argument for loss function selection
     parser.add_argument(
-        "--loss_function",
+        "--loss_function_type",
         type=str,
         help="loss function type (MSE, RMSE or WMSE)",
         default="WMSE",
@@ -166,7 +166,7 @@ def main():
     
     args = parser.parse_args()   
 
-    print(args.loss_function) #!!!!!!!!!!!! daha sonra silinecek
+    print(args.loss_function_type) #!!!!!!!!!!!! daha sonra silinecek
     
     # kodu path'den bagimsiz hale getirelim.
     # Kodunuzun ana dizinini bulun
@@ -231,11 +231,11 @@ def main():
             recon_images, latent_v = AE_model(images)
             
             # loss function is also decided by assigned hyperparameter
-            if args.loss_function == "MSE":
+            if args.loss_function_type == "MSE":
                 loss = criterion(recon_images, images)
-            elif args.loss_function == "RMSE":
+            elif args.loss_function_type == "RMSE":
                 loss = RMSELoss(recon_images, images)
-            elif args.loss_function == "WMSE":
+            elif args.loss_function_type == "WMSE":
                 loss = loss_function(reconstructed=recon_images, origin= images, device= device, mode = args.loss_mode) 
                 
             optimizer.zero_grad()
@@ -264,11 +264,11 @@ def main():
                     val_recon_images, latent = AE_model(val_images)
             
                     # loss function is also decided by assigned hyperparameter
-                    if args.loss_function == "MSE":
+                    if args.loss_function_type == "MSE":
                         loss_val = criterion(val_recon_images, val_images)
-                    elif args.loss_function == "RMSE":
+                    elif args.loss_function_type == "RMSE":
                         loss_val = RMSELoss(val_recon_images, val_images)
-                    elif args.loss_function == "WMSE":
+                    elif args.loss_function_type == "WMSE":
                         loss_val = loss_function(reconstructed=val_recon_images, origin= val_images, device= device, mode = args.loss_mode)          
 
             # Logging to vessl
@@ -290,7 +290,7 @@ def main():
 
     # Evaulation of the validation set
     final_output_val, latent_val, MAPE_val, loss_val = evaluate(model= AE_model, 
-                                                                test_dataloader=val_loader, loss_function= args.loss_function, loss_mode=args.loss_mode, device=device)
+                                                                test_dataloader=val_loader, loss_fn_name= args.loss_function_type, loss_mode=args.loss_mode, device=device)
     
     print("Validation Loss: ", MAPE_val, " and ", loss_val, ". (MAPE and Loss function, respectively)")
 
