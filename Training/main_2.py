@@ -102,11 +102,11 @@ def evaluate(model, test_dataloader, loss_function, loss_mode, device):
             recon_images, latent = model(images)
             
             # loss function is also decided by assigned hyperparameter
-            if loss_function == "MSE":
+            if loss_fn_name == "MSE":
                 loss = criterion(recon_images, images)
-            elif loss_function == "RMSE":
+            elif loss_fn_name == "RMSE":
                 loss = RMSELoss(recon_images, images)
-            elif loss_function == "WMSE":
+            elif loss_fn_name == "WMSE":
                 loss = loss_function(reconstructed=recon_images, origin= images, device= device, mode = loss_mode)
             
             total_N += images.size(0)
