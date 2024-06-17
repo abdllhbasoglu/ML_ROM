@@ -69,7 +69,7 @@ def loss_function(reconstructed, origin, device, alpha=1.0, beta=1.0, mode='log'
         velocity_loss = beta * (u_velocity_loss.mean() + v_velocity_loss.mean())
     
     # Total loss
-    total_loss = pressure_loss + velocity_loss
+    total_loss = (pressure_loss + velocity_loss) / 3.0
     
     return total_loss
 
