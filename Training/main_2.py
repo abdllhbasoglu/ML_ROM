@@ -179,8 +179,8 @@ def main():
     output_path = os.path.join(main_path, "..", "..", "output")
     
     # Veri dosyalarını yükleme
-    data = np.load(os.path.join(dataset_path, "flowfield_hom.npy"))
-    flow_cond = np.load(os.path.join(dataset_path, "flowcon_hom.npy"))
+    data = np.load(os.path.join(dataset_path, "flowfield.npy"))
+    flow_cond = np.load(os.path.join(dataset_path, "flowcon.npy"))
 
     minibatch = args.batch_size # how many samples per batch to load
     if minibatch == None:
